@@ -11,14 +11,14 @@ RUN \
 
 FROM ubuntu:18.04
 
-ARG APPIUM_VERSION="1.8.1"
+ARG APPIUM_VERSION="2.0.0-beta.46"
 
 RUN \
     apt update && \
     apt remove -y libcurl4 && \
     apt install -y apt-transport-https ca-certificates tzdata locales libcurl4 curl gnupg && \
-	curl --silent --location https://deb.nodesource.com/setup_12.x | bash - && \
-	apt install -y --no-install-recommends \
+	curl --silent --location https://deb.nodesource.com/setup_17.x | bash - && \
+	apt install -y \
 	    curl \
 	    iproute2 \
 	    nodejs \
@@ -35,10 +35,11 @@ RUN \
         feh \
         wmctrl \
 	    libglib2.0-0 && \
+    yes | apt-get install lib32stdc++6 || true && \
+    apt-get install npm && \
     apt-get clean && \
-    rm -Rf /tmp/* && rm -Rf /var/lib/apt/lists/*
-
-RUN cd / && npm install --prefix ./opt/ appium@$APPIUM_VERSION
+    rm -Rf /tmp/* && rm -Rf /var/lib/apt/lists/*  && \
+    cd / && npm install --prefix ./opt/ appium@$APPIUM_VERSION
 
 COPY android.conf /etc/ld.so.conf.d/
 COPY fluxbox/aerokube /usr/share/fluxbox/styles/
